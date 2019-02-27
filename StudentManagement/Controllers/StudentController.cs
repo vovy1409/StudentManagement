@@ -34,7 +34,7 @@ namespace StudentManagement.Controllers
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> Get(long id)
+        public async Task<ActionResult<Student>> Get(int id)
         {
             var student = await _context.Students.FindAsync(id);
             if (student == null)
@@ -46,7 +46,7 @@ namespace StudentManagement.Controllers
 
         //GET 
         [HttpGet("GetByMajorId/{MajorId}")]
-        public async Task<ActionResult<IEnumerable<Student>>> Get(int MajorId)
+        public async Task<ActionResult<IEnumerable<Student>>> GetByMajorID(int MajorId)
         {
             return await _context.Students.AsNoTracking().Where(x => x.MajorID==MajorId).ToListAsync();
            
@@ -67,7 +67,7 @@ namespace StudentManagement.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Student>> Put(long id, Student student)
+        public async Task<ActionResult<Student>> Put(int id, Student student)
         {
             var std = await _context.Students.FindAsync(id);
             if (std == null)
@@ -85,7 +85,7 @@ namespace StudentManagement.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Student>> Delete(long id)
+        public async Task<ActionResult<Student>> Delete(int id)
         {
             var rec = await _context.Students.FindAsync(id);
             if (rec == null)

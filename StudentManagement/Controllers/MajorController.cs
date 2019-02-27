@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Modals;
@@ -10,6 +11,7 @@ using StudentManagement.Modals;
 
 namespace StudentManagement.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MajorController : ControllerBase
@@ -20,6 +22,7 @@ namespace StudentManagement.Controllers
             _context = context;
         }
         // GET: api/<controller>
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Major>>> Get()
         {
@@ -29,7 +32,7 @@ namespace StudentManagement.Controllers
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Major>> Get(long id)
+        public async Task<ActionResult<Major>> Get(int id)
         {
             var major = await _context.Majors.FindAsync(id);
             if (major == null)
@@ -55,7 +58,7 @@ namespace StudentManagement.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Major>> Put(long id, Major major)
+        public async Task<ActionResult<Major>> Put(int id, Major major)
         {
             var mj = await _context.Students.FindAsync(id);
             if (mj == null)

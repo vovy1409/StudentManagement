@@ -9,6 +9,9 @@ namespace StudentManagement.Utils
 {
     public class Helper
     {
+        public readonly static string AppKey = "1234567890abcdefgh";
+        public readonly static string Issuer = "mysite.com";
+
         public static string GenHash(string input)
         {
             return string.Join("", new SHA1Managed().ComputeHash(Encoding.UTF8.GetBytes(input))

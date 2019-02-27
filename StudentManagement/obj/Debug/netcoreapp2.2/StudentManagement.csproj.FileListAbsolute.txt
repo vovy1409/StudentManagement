@@ -12,3 +12,17 @@ C:\Users\isc\source\repos\StudentManagement\StudentManagement\obj\Debug\netcorea
 C:\Users\isc\source\repos\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.pdb
 C:\Users\isc\source\repos\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.dll
 C:\Users\isc\source\repos\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.pdb
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.deps.json
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.runtimeconfig.json
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.runtimeconfig.dev.json
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.dll
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.pdb
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.csprojAssemblyReference.cache
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.csproj.CoreCompileInputs.cache
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorAssemblyInfo.cache
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorAssemblyInfo.cs
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.AssemblyInfoInputs.cache
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.AssemblyInfo.cs
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorTargetAssemblyInfo.cache
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.dll
+C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.pdb
