@@ -89,31 +89,35 @@ namespace StudentManagement.Controllers
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Student>> Put(int id, Student student)
+        public async Task<ActionResult<Student>> Put(int id, [FromForm] Student student)
         {
             var std = await _context.Students.FindAsync(id);
             if (std == null)
             {
                 return NotFound();
             }
-            std.StudentID = student.StudentID;
             std.Code = student.Code;
             std.Name = student.Name;
             std.MajorID = student.MajorID;
             var file = student.File;
             if (file != null)
             {
-                string newFileName = student.StudentID + " " + file.FileName;
-                string path = _hostingEnvironment.ContentRootPath + "\\Data\\" + newFileName;
-                using (var stream = new FileStream(path, FileMode.Create))
+                string path = _hostingEnvironment.ContentRootPath + "\\Data\\" + std.ImagePath;
+                if ((System.IO.File.Exists(path)))
+                {
+                    System.IO.File.Delete(path);
+                }
+                string newFileName = std.StudentID + "_" + file.FileName;
+                string path1 = _hostingEnvironment.ContentRootPath + "\\Data\\" + newFileName;
+                using (var stream = new FileStream(path1, FileMode.Create))
                 {
                     file.CopyTo(stream);
-                    student.ImagePath = newFileName;
-                    _context.Entry(student).Property(x => x.ImagePath).IsModified = true;
-                    _context.SaveChanges();
+                    std.ImagePath = newFileName;
                 }
 
             }
+            else
+                std.ImagePath = null;
             _context.Students.Update(std);
             await _context.SaveChangesAsync();
             return Ok(std);
