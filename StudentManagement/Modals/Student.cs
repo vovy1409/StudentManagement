@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,9 +12,12 @@ namespace StudentManagement.Modals
     {
         public int StudentID { get; set; }
         public string Code { get; set; }
-        [Column("StudentName", TypeName ="text")]
+        [Column("StudentName")]
         [MaxLength(100)]
         public string Name { get; set; }
+        public string ImagePath { get; set; }
+        [NotMapped]
+        public IFormFile File { get; set; }
         public int MajorID { get; set; }
         [ForeignKey("MajorID")]
         public virtual Major Major { get; set; }

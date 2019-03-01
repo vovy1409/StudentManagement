@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Modals;
@@ -16,9 +19,11 @@ namespace StudentManagement.Controllers
     public class StudentController : ControllerBase
     {
         private readonly DB _context;
-        public StudentController(DB context)
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public StudentController(IHostingEnvironment hostingEnvironment, DB context)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;
         }
         // GET: api/<controller>
         [HttpGet]
@@ -53,15 +58,32 @@ namespace StudentManagement.Controllers
         }
         // POST api/<controller>
         [HttpPost]
-        public async Task<ActionResult<Student>> Post(Student student)
+        public async Task<ActionResult<Student>> Post([FromForm] Student student)
         {
             var check = await _context.Students.Where(x => x.StudentID == student.StudentID).FirstOrDefaultAsync();
             if (check != null)
             {
                 return BadRequest();
             }
+            
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
+
+            var file = student.File;
+            if (file != null)
+            {
+                string newFileName = student.StudentID + " " + file.FileName;
+                string path = _hostingEnvironment.ContentRootPath + "\\Data\\" + newFileName;
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                    student.ImagePath = newFileName;
+                    _context.Entry(student).Property(x => x.ImagePath).IsModified = true;
+                    _context.SaveChanges();
+                }
+                
+            }
+            student.File = null;
             return CreatedAtAction("Get", new { id = student.StudentID }, student);
         }
 
@@ -78,6 +100,20 @@ namespace StudentManagement.Controllers
             std.Code = student.Code;
             std.Name = student.Name;
             std.MajorID = student.MajorID;
+            var file = student.File;
+            if (file != null)
+            {
+                string newFileName = student.StudentID + " " + file.FileName;
+                string path = _hostingEnvironment.ContentRootPath + "\\Data\\" + newFileName;
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                    student.ImagePath = newFileName;
+                    _context.Entry(student).Property(x => x.ImagePath).IsModified = true;
+                    _context.SaveChanges();
+                }
+
+            }
             _context.Students.Update(std);
             await _context.SaveChangesAsync();
             return Ok(std);
