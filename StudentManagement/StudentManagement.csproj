@@ -12,4 +12,14 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Data\0 back-end-ex-1.png" />
+    <None Include="wwwroot\Data\12 back-end-ex-1.png" />
+    <None Include="wwwroot\Data\13 back-end-ex-1.png" />
+    <None Include="wwwroot\Data\14 QuanLyHocSinh-1.cdm" />
+    <None Include="wwwroot\Data\17_dfsdfds.txt" />
+    <None Include="wwwroot\Data\8_ERD.txt" />
+    <None Include="wwwroot\Data\back-end-ex-1.png" />
+  </ItemGroup>
+
 </Project>

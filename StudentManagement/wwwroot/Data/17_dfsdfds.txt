@@ -1,0 +1,230 @@
+program example;
+uses STArduino,STMPU6050;
+const
+	// DC MOTOR
+	RIGHT_MOTOR_INB	=	9;
+	RIGHT_MOTOR_INA	=	8;
+	RIGHT_MOTOR_EN		=	4;
+	LEFT_MOTOR_INB		=	11;
+	LEFT_MOTOR_INA		=	12;
+	LEFT_MOTOR_EN		=	13;
+	RIGHT_ENCODER_CHANNEL_A=	3;
+	RIGHT_ENCODER_CHANNEL_B=	5;
+	LEFT_ENCODER_CHANNEL_A =	2;
+	LEFT_ENCODER_CHANNEL_B =	7;
+	// LINE SENSOR
+	SS1	=	A1;
+	SS2	=	A2;
+	SS3	=	A3;
+	SS4	=	A4;
+	SS5	=	A5;
+	// COEFFICIENT
+	KV	=	0.05;
+	KP	=	45;
+	KS	=	4;// thu KS
+	// MPU6050 
+	OFFSET_ANGLE	=3.6;		// // n?u xe d? theochi?u âm --> tang OFFSET theo chi?u âm và ngu?c l?i
+var 
+	leftEncoderCounter,rightEncoderCounter : longint;
+	PreEncoder : real;
+	angle,speed,lineValue:real;
+	mpu: SMPU6050;
+	preTime:longint;
+	preSpeed:real;
+	
+	
+procedure leftEncoderIntFunc;      // interrupt function for left motor
+begin   
+	if(digitalRead(LEFT_ENCODER_CHANNEL_B)=HIGH)   then
+  		leftEncoderCounter := leftEncoderCounter - 1 
+	else                                        
+		leftEncoderCounter := leftEncoderCounter + 1;  	
+	//serialPrintlnLong(leftEncoderCounter);         	
+end;
+
+procedure rightEncoderIntFunc;	// interrupt function for right motor
+begin   
+  	if(digitalRead(RIGHT_ENCODER_CHANNEL_B) = HIGH)    then
+  	rightEncoderCounter := rightEncoderCounter + 1
+  	else                                 
+  	rightEncoderCounter := rightEncoderCounter - 1;   
+  	//serialPrintlnLong(rightEncoderCounter);             
+end;
+
+procedure dcMotorConfig;
+begin	
+	//  c?u hình d?ng co trái
+  	pinMode(LEFT_MOTOR_EN,OUTPUT);		// chân PWM di?u khi?n t?c d? d?ng co
+  	pinMode(LEFT_MOTOR_INA,OUTPUT);		// chân di?u khi?n d?ng co quay thu?n - ngh?ch
+  	pinMode(LEFT_MOTOR_INB,OUTPUT);		// chân di?u khi?n d?ng co quay thu?n - ngh?ch
+  	
+  	pinMode(LEFT_ENCODER_CHANNEL_A,INPUT);
+  	pinMode(LEFT_ENCODER_CHANNEL_B, INPUT);
+  	attachInterrupt(digitalPinToInterrupt(LEFT_ENCODER_CHANNEL_A), leftEncoderIntFunc, RISING);       // RISING: ng?t xung c?nh lên, leftEncoderIntFunc: tên hàm d?c encoder
+
+  	//  c?u hình d?ng co ph?i
+  	pinMode(RIGHT_MOTOR_EN,OUTPUT);		// chân PWM di?u khi?n t?c d? d?ng co
+  	pinMode(RIGHT_MOTOR_INA,OUTPUT);	// chân di?u khi?n d?ng co quay thu?n - ngh?ch
+  	pinMode(RIGHT_MOTOR_INB,OUTPUT);	// chân di?u khi?n d?ng co quay thu?n - ngh?ch
+  	
+  	pinMode(RIGHT_ENCODER_CHANNEL_A,INPUT);
+  	pinMode(RIGHT_ENCODER_CHANNEL_B, INPUT);
+  	attachInterrupt(digitalPinToInterrupt(RIGHT_ENCODER_CHANNEL_A), rightEncoderIntFunc, RISING);   // RISING: ng?t xung c?nh lên, rightEncoderIntFunc: tên hàm d?c encoder   
+end;
+procedure lineSensorConfig;
+begin
+  	pinMode(SS1,INPUT);
+  	pinMode(SS2,INPUT);
+  	pinMode(SS3,INPUT);
+ 	pinMode(SS4,INPUT);
+  	pinMode(SS5,INPUT);	
+end;
+
+procedure setup;
+begin
+	mpu6050Init(mpu, $68);		// d?a ch? MPU6050 là 0x68
+	dcMotorConfig;				
+	lineSensorConfig;			
+	leftEncoderCounter := 0;
+	rightEncoderCounter := 0;
+	preTime:=0;
+	preSpeed:=0;
+	serialBegin(115200);		// hàm in ra màn hình v?i t?c d? giao ti?p là 115200
+end;
+
+function getSpeed:real;	// chuong trình con c?a hàm do v?n t?c bánh xe
+var 
+	counter : real;
+begin
+{
+    Encoder 13 xung, d?ng co 1 : 34
+    1 Vong        <-->    442 xung
+    0.08 s        -->   X / 442              Vòng
+    60 s          -->   60 * (X / 442) / 0.08 = X * 1.6968 Vong / phut
+}
+	if millis-preTime>=40 then // m?i 80ms thì m?i d?c m?t l?n, l?y trung bình v?n t?c c?a 2 bánh xe
+	begin
+		preTime:=millis;
+		counter := (leftEncoderCounter ) - PreEncoder; 
+		PreEncoder := (leftEncoderCounter );
+		preSpeed:= integer(counter) * 1.6968;
+		//serialPrintlnReal(preSpeed);
+	end;	
+	getSpeed:=preSpeed;			
+end;
+
+function getLineSensor:real;		// chuong trình con c?a hàm dò line
+var 
+	err, Value : real;
+	lineSensorValue: array [1..5] of integer;	
+	i, SaiSo, RaNgoai :integer;
+begin
+{
+  LUU Ý: Ð?I V?I THANH DÒ LINE, S? TR? V? GIÁ TR? NHU SAU:
+         V?CH ÐEN  <--> LOGIC 0
+         N?N TR?NG <--> LOGIC 1
+}
+  //-------------- VI?T CODE Ð?C C?M BI?N DÒ LINE T?I ÐÂY --------------------
+ 
+	
+	SaiSo:=0; 
+	RaNgoai:=0;
+	lineSensorValue[1] := digitalRead(SS1);
+	lineSensorValue[2] := digitalRead(SS2);
+	lineSensorValue[3] := digitalRead(SS3);
+	lineSensorValue[4] := digitalRead(SS4);
+	lineSensorValue[5] := digitalRead(SS5);
+	if ((lineSensorValue[1]=0) and (lineSensorValue[2]=1) and (lineSensorValue[3]=1) and (lineSensorValue[4]=1 )and (lineSensorValue[5]=1)) then
+	begin SaiSo:=4; RaNgoai:=1 end 
+	else  if ((lineSensorValue[1]=0) and (lineSensorValue[2]=0) and (lineSensorValue[3]=1) and (lineSensorValue[4]=1 )and (lineSensorValue[5]=1) )then
+	begin SaiSo:=3; RaNgoai:=1 end 
+	else  if ((lineSensorValue[1]=1) and (lineSensorValue[2]=0) and (lineSensorValue[3]=1) and (lineSensorValue[4]=1 )and (lineSensorValue[5]=1))then  SaiSo:=2 
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=0) and (lineSensorValue[3]=0) and (lineSensorValue[4]=1 )and (lineSensorValue[5]=1) then  SaiSo:=1 
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=1) and (lineSensorValue[3]=0) and (lineSensorValue[4]=1 )and (lineSensorValue[5]=1) then SaiSo:=0 
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=1) and (lineSensorValue[3]=0) and (lineSensorValue[4]=0 )and (lineSensorValue[5]=1) then  SaiSo:=-1
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=1) and (lineSensorValue[3]=1) and (lineSensorValue[4]=0 )and (lineSensorValue[5]=1) then SaiSo:=-2 
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=1) and (lineSensorValue[3]=1) and (lineSensorValue[4]=0 )and (lineSensorValue[5]=0) then
+	begin SaiSo:=-3; RaNgoai:=-1 end 
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=1) and (lineSensorValue[3]=1) and (lineSensorValue[4]=1)and (lineSensorValue[5]=0) then
+	begin SaiSo:=-4; RaNgoai:=-1 end 
+	else  if (lineSensorValue[1]=1) and (lineSensorValue[2]=1) and (lineSensorValue[3]=1) and (lineSensorValue[4]=1)and (lineSensorValue[5]=1)then 
+	begin 
+		if(RaNgoai=1) then 
+		SaiSo:=5 
+		else SaiSo:=-5 
+	end ;
+	
+
+  //-------------------------------------------------------------------------
+	Value := KS * SaiSo;//Value
+	getLineSensor := integer(Value);
+	
+end;
+
+procedure OutputMotor;		// chuong trình con c?a hàm output ra d?ng co
+var
+	leftPwm,rightPwm:integer;
+	Saiso ,GocMucTieu , Pwm ,VanTocMucTieu,SaiSoVantoc: real ;
+begin
+	
+	
+	//---------------------------- VI?T CODE T?I ÐÂY -------------------------
+
+	VanTocMucTieu := 10; //( do lai 40vong/giay) 
+	SaiSoVanToc := VanTocMucTieu - speed; // Vantocxe=speed
+	GocMuctieu := KV * SaiSoVanToc ;
+	Saiso := GocMucTieu - angle ;
+	Pwm:= KP * Saiso ;
+	leftPwm :=integer(Pwm)+ integer(lineValue);
+	
+	rightPwm:=integer(Pwm)- integer(lineValue);
+	
+
+
+
+	
+	//-------------------------- XU?T RA Ð?NG CO ----------------------------
+	if leftPwm < 0 then
+	begin
+		if leftPwm < -255 then		leftPwm := -255;
+		digitalWrite(LEFT_MOTOR_INA, LOW);
+		digitalWrite(LEFT_MOTOR_INB, HIGH);
+		leftPwm := abs(leftPwm);
+	end
+	else		// leftPwm >= 0
+	begin
+		if leftPwm > 255	then 	leftPwm := 255;
+		digitalWrite(LEFT_MOTOR_INA, HIGH);
+		digitalWrite(LEFT_MOTOR_INB, LOW);
+	end;
+
+	if rightPwm < 0 then
+	begin
+		if rightPwm < -255 then		rightPwm := -255;
+		digitalWrite(RIGHT_MOTOR_INA, LOW);
+		digitalWrite(RIGHT_MOTOR_INB, HIGH);
+		rightPwm := abs(rightPwm);
+	end
+	else		// rightPwm >= 0
+	begin
+		if rightPwm > 255	then 	rightPwm := 255;
+		digitalWrite(RIGHT_MOTOR_INA, HIGH);
+		digitalWrite(RIGHT_MOTOR_INB, LOW);
+	end;
+	analogWrite(LEFT_MOTOR_EN, leftPwm);
+	analogWrite(RIGHT_MOTOR_EN, rightPwm);
+end;
+
+procedure loop;
+begin
+	angle := mpu6050GetYAngle(mpu) + OFFSET_ANGLE;
+	speed := getSpeed; // do?cc vt ba´nh xe ba`i 9 
+	lineValue := getLineSensor; // ca?m biê´n do` lai ba`i 4 
+	OutputMotor; // xuaaxuat goc nghieng
+	//serialPrintlnReal(angle);
+end;
+
+begin
+	//setup;		 // ch? ch?y 1 l?n duy nh?t
+	//loop;		 // vòng l?p vô t?n
+end.

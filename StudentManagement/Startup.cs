@@ -78,6 +78,7 @@ namespace StudentManagement
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseStaticFiles(); //share data in wwwroot folder, use: http://localhost:59209/data/back-end-ex-1.png
             app.UseAuthentication();
             app.UseCors("AllowAll");
             app.UseHttpsRedirection();

@@ -26,3 +26,17 @@ C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2
 C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorTargetAssemblyInfo.cache
 C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.dll
 C:\Users\QVC\Desktop\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.pdb
+E:\isc07\back-end\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.deps.json
+E:\isc07\back-end\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.runtimeconfig.json
+E:\isc07\back-end\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.runtimeconfig.dev.json
+E:\isc07\back-end\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.dll
+E:\isc07\back-end\StudentManagement\StudentManagement\bin\Debug\netcoreapp2.2\StudentManagement.pdb
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.csprojAssemblyReference.cache
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.csproj.CoreCompileInputs.cache
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorAssemblyInfo.cache
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorAssemblyInfo.cs
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.AssemblyInfoInputs.cache
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.AssemblyInfo.cs
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.RazorTargetAssemblyInfo.cache
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.dll
+E:\isc07\back-end\StudentManagement\StudentManagement\obj\Debug\netcoreapp2.2\StudentManagement.pdb

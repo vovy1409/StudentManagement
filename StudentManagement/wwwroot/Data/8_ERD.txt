@@ -1,0 +1,50 @@
+﻿ERD
+Có 17 bảng
+Candidate (học viên, thí sinh)
+catalog (niên khóa học)
+semester (học kỳ)
+year (năm)
+stage (đợt tuyển sinh)
+intake (khóa học)
+exam (môn thi)
+grade (điểm môn thi)
+district (quận)
+province(tỉnh dùng cho field hometown và tỉnh đang sinh sống)
+nation(quốc tịch dùng cho field homecountry)
+candidatedocument (giấy tờ học viên đã nộp)
+document(các loại giấy tờ cần phải nộp)
+candidatetype (loại học viên, thí sinh: miễn thi môn abc, normal, v.v...)
+major(ngành học)
+education (bằng cấp hoặc trình độ của học viên)
+parameter (lưu trữ thông tin của phòng đào tạo)
+
+*** Mô tả mối liên hệ
+Có 21 mối liên hệ
+1. Một học viên, thí sinh có thể tham gia 1 hoặc nhiều đợt tuyển sinh, 1 đợt tuyển sinh có thể có 0 hoặc nhiều thí sinh tham gia
+2. Một học viên, thí sinh có thể thuộc 0 hoặc nhiều niên khóa ( không thuộc niên khóa nào trong trường hợp thí sinh đó thi bị rớt, chưa nhập học), 1 niên khóa có thể có 0 hoặc nhiều học viên
+3. Một học viên, thí sinh có thể học 0 hoặc nhiều năm, 1 năm có thể có 0 hoặc nhiều học viên
+4. Một học viên, thí sinh có thể học 0 hoặc nhiều học kỳ, 1 học kỳ có thể có 0 hoặc nhiều học viên
+5. Một học viên, thí sinh phải nộp 1 hoặc nhiều giấy tờ, 1 giấy tờ chỉ thuộc 1 học viên, thí sinh
+6. Một giấy tờ mà thí sinh đã nộp phải thuộc 1 loại giấy tờ cần phải nộp, giấy tờ cần phải nộp có thể không học viên nào nộp (0) hoặc nhiều thí sinh nộp loại giấy tờ đó
+7. Một học viên phải ở 1 tỉnh, 1 tỉnh có thể không có học viên nào hoặc có nhiều học viên
+8. Một tỉnh có nhiều quận, 1 quận thuộc 1 tỉnh
+9. Một tỉnh thuộc 1 nước, 1 nước có nhiều tỉnh
+10. Một học viên, thí sinh có 1 quốc tịch, 1 quốc tịch có 0 hoặc nhiều học viên
+11. Một học viên, thí sinh có 1 tỉnh nơi sinh, nơi sinh này có 0 hoặc nhiều học viên sinh ra
+12. Một học viên chọn 1 ngành học, ngành học này có 0 hoặc nhiều học viên chọn
+13. Một học viên, thí sinh có 1 trình độ, 1 trình độ có thể có 0 hoặc nhiều học viên, thí sinh
+14. Một học viên thuộc 1 khóa học, 1 khóa học có 0 hoặc nhiều học viên
+15. Một khóa học có 1 hoặc nhiều đợt tuyển sinh, 1 đợt tuyển sinh chỉ để tuyển sinh cho một khóa học
+16. Một đợt tuyển sinh có 1 hoặc nhiều môn tuyển sinh, 1 môn đó có thể dành cho 0 hoặc nhiều đợt tuyển sinh
+17. Một môn tuyển sinh có 0 hoặc nhiều điểm (điểm từ nhiều thí sinh thi), 1 điểm phải thuộc 1 môn tuyển sinh
+18. Một học viên, thí sinh có 1 hoặc nhiều điểm (tương ứng 1 hoặc nhiều môn thi trong 1 hoặc nhiều đợt thi), 1 điểm chỉ thuộc 1 thí sinh
+19. Một học viên, thí sinh thuộc 1 loại học viên, thí sinh, một loại học viên, thí sinh có thể có 0 hoặc nhiều học viên, thí sinh
+20. Một parameter có 1 hoặc nhiều khóa học (thay đổi theo current), 1 khóa học chỉ thuộc 0/1 parameter
+21. Một parameter có 1 hoặc nhiều năm học (thay đổi theo current), 1 năm chỉ thuộc 0/1 parameter
+22. Một parameter có 1 hoặc nhiều học kỳ (thay đổi theo current), 1 học kỳ chỉ thuộc 0/1 parameter
+
+*** Mô tả sơ về kiểu dữ liệu của thuộc tính
+- Tất cả các khóa chính đều ở dạng int
+- Ở bảng candidate có 3 loại ID, ID là khóa chính của từng candidate, candidate_id là mã sinh viên của sinh viên, IDcard là chứng minh thư, 2 loại ID này coi như là thông tin của candidate
+- Bảng grade có thuộc tính grade, interviewer, result, trong đó interviewer là tên người phỏng vấn ở những bài test phỏng vấn, result để kiểu dữ liệu int để set giá trị 0/1 tương ứng failed/passed
+- Input type, status trong document có kiểu dữ liệu int set giá trị tương tự result của grade
