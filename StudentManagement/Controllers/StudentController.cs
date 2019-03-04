@@ -39,7 +39,7 @@ namespace StudentManagement.Controllers
                 Code = x.Code,
                 Name = x.Name,
                 MajorName = x.Major.Name
-            }).OrderBy(x=>x.StudentID);
+            }).OrderBy(x => x.StudentID);
             long totalRows = await query.LongCountAsync();
 
             var pageCount = (double)totalRows / req.Size;
@@ -80,11 +80,16 @@ namespace StudentManagement.Controllers
         public async Task<ActionResult<Student>> Get(int id)
         {
             var student = await _context.Students.FindAsync(id);
-            if (student == null)
+            if (student != null)
             {
-                return NotFound();
+                if (student.ImagePath.Length > 0)
+                {
+                    string domainUrl = Request.Scheme + "://" + Request.Host.ToString();
+                    string path = domainUrl + "/Data/" + student.ImagePath;
+                    return Ok(path);
+                }
             }
-            return student;
+            return NoContent();
         }
 
         //GET 
@@ -93,6 +98,74 @@ namespace StudentManagement.Controllers
         {
             return await _context.Students.AsNoTracking().Where(x => x.MajorID==MajorId).ToListAsync();
            
+        }
+
+        //Get photo
+
+        [HttpGet("getPhoto/{Id}")]
+        public FileResult GetPhoto(int Id)
+        {
+            Student std =  _context.Students.Find(Id);
+            if (std != null)
+            {
+                if (std.ImagePath.Length > 0)
+                {
+                    string path = _hostingEnvironment.WebRootPath + "\\Data\\" + std.ImagePath;
+                    try
+                    {
+                        byte[] bytes = System.IO.File.ReadAllBytes(path);
+                        return File(bytes, System.Net.Mime.MediaTypeNames.Application.Octet, std.ImagePath);
+                    }
+                    catch { }
+                }
+            }
+            return null;
+        }
+
+        // /->web, \->folder
+        //Get photodata
+
+        [HttpGet("getPhotoData/{Id}")]
+        public ActionResult GetPhotoData(int Id)
+        {
+            Student std = _context.Students.Find(Id);
+            if (std != null)
+            {
+                if (std.ImagePath.Length > 0)
+                {
+                    string path = _hostingEnvironment.WebRootPath + "\\Data\\" + std.ImagePath;
+                    try
+                    {
+                        byte[] bytes = System.IO.File.ReadAllBytes(path);
+                        string base64Str = Convert.ToBase64String(bytes);
+
+                        return Ok(new ImageInfo {
+                            FileName = std.ImagePath,
+                            Extension = System.IO.Path.GetExtension(std.ImagePath),
+                            Data = base64Str
+                        });
+                    }
+                    catch { }
+                }
+            }
+            return NoContent();
+        }
+
+        //Get Photourl of student
+        [HttpGet("getPhotoUrl/{Id}")]
+        public async Task<ActionResult<Student>> GetPhotoUrl(int Id)
+        {
+            Student std = await _context.Students.FindAsync(Id);
+            if (std != null)
+            {
+                if (std.ImagePath.Length > 0)
+                {
+                    string domainUrl = Request.Scheme + "://" + Request.Host.ToString();
+                    string path = domainUrl + "/Data/" + std.ImagePath;
+                    return Ok(path);
+                }
+            }
+            return NoContent();
         }
         // POST api/<controller>
         [HttpPost]
