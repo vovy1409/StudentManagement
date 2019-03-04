@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagement.Modals;
+using StudentManagement.Modals.Request;
 using StudentManagement.Modals.Response;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,15 +28,52 @@ namespace StudentManagement.Controllers
         }
         // GET: api/<controller>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentInfo>>> Get()
+
+        //Test on Postman: http://localhost:59209/api/student?page=xx&size=xxx
+
+        public async Task<ActionResult<PagingResponse>> Get([FromQuery] PagingRequest req)
         {
-            return await _context.Students.Include(x => x.Major).AsNoTracking().Select(x => new StudentInfo {
-                    StudentID = x.StudentID,
-                    Code = x.Code,
-                    Name= x.Name,
-                    MajorName=x.Major.Name
-                }).ToListAsync();
+            var query = _context.Students.Include(x => x.Major).AsNoTracking().Select(x => new StudentInfo
+            {
+                StudentID = x.StudentID,
+                Code = x.Code,
+                Name = x.Name,
+                MajorName = x.Major.Name
+            }).OrderBy(x=>x.StudentID);
+            long totalRows = await query.LongCountAsync();
+
+            var pageCount = (double)totalRows / req.Size;
+            int totalPage = (int)Math.Ceiling(pageCount);
+
+            var skip = (req.Page - 1) * req.Size; // skip (pageNumber-1) * PageSize pages
+            var result = await query.Skip(skip).Take(req.Size).ToListAsync();
+
+            return Ok(new PagingResponse
+            {
+                Data = result,
+                PagingInfo = new PagingInfo
+                {
+                    CurrentPage = req.Page,
+                    PageSize=req.Size,
+                    TotalRecords=totalRows,
+                    TotalPages=totalPage                    
+                }
+            });
         }
+
+
+
+        //public async Task<ActionResult<IEnumerable<StudentInfo>>> Get()
+        //{
+        //    return await _context.Students.Include(x => x.Major).AsNoTracking().Select(x => new StudentInfo {
+        //            StudentID = x.StudentID,
+        //            Code = x.Code,
+        //            Name= x.Name,
+        //            MajorName=x.Major.Name
+        //        }).ToListAsync();
+        //}
+
+
 
         // GET api/<controller>/5
         [HttpGet("{id}")]
