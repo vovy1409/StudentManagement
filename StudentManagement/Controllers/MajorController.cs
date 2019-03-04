@@ -74,8 +74,17 @@ namespace StudentManagement.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<Major>> Delete(int id)
         {
+            var mj = await _context.Majors.FindAsync(id);
+            if (mj == null)
+            {
+                return NotFound();
+            }
+            
+            _context.Majors.Remove(mj);
+            await _context.SaveChangesAsync();
+            return mj;
         }
     }
 }

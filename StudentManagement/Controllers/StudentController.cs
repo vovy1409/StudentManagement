@@ -65,6 +65,10 @@ namespace StudentManagement.Controllers
             {
                 return BadRequest();
             }
+            if (await _context.Majors.FindAsync(student.MajorID) == null)
+            {
+                return BadRequest("Khong ton tai major id");
+            }
             
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
@@ -72,7 +76,7 @@ namespace StudentManagement.Controllers
             var file = student.File;
             if (file != null)
             {
-                string newFileName = student.StudentID + " " + file.FileName;
+                string newFileName = student.StudentID + "_" + file.FileName;
                 string path = _hostingEnvironment.ContentRootPath + "\\Data\\" + newFileName;
                 using (var stream = new FileStream(path, FileMode.Create))
                 {
