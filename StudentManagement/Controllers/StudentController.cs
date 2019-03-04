@@ -116,8 +116,6 @@ namespace StudentManagement.Controllers
                 }
 
             }
-            else
-                std.ImagePath = null;
             _context.Students.Update(std);
             await _context.SaveChangesAsync();
             return Ok(std);
@@ -127,14 +125,19 @@ namespace StudentManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Student>> Delete(int id)
         {
-            var rec = await _context.Students.FindAsync(id);
-            if (rec == null)
+            var std = await _context.Students.FindAsync(id);
+            if (std == null)
             {
                 return NotFound();
             }
-            _context.Students.Remove(rec);
+            string path = _hostingEnvironment.ContentRootPath + "\\Data\\" + std.ImagePath;
+            if ((System.IO.File.Exists(path)))
+            {
+                System.IO.File.Delete(path);
+            }
+            _context.Students.Remove(std);
             await _context.SaveChangesAsync();
-            return rec;
+            return std;
         }
     }
 }
